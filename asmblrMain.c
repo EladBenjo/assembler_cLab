@@ -25,7 +25,7 @@ int main (int argc, char* argv[])
         }
 
         mcroUnfold(file);
-
+        /* proccesing file */
         
 		/* for this part we use read row, for each row that is formated - tokenize
 			each word that is now only seperated by 1 space. send out each token
