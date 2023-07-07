@@ -17,6 +17,7 @@ typedef struct HashTable
     macroItem** items;
     int size;
     int count;
+    int maxProbs;
 } macroTable;
 
 /* Creates a macro item */
