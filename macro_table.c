@@ -29,6 +29,7 @@ typedef struct HashTable
 	macroItem** items;
 	int size;
 	int count;
+	int maxProbs;
 } macroTable;
 
 /*create macro item*/
@@ -85,12 +86,16 @@ void freeMacroTable(macroTable* table)
 bool searchMacro(macroTable* table, char* macroName)
 {
 	unsigned long index = macroHash(table->size, macroName, 0);
+	int probsCount = 0; /* to compare to max prob of the table */
 	macroItem* item = table->items[index];
 
 	while (item != NULL)
 	{
 		if (strcmp(item->key, macroName) == 0)
 			return true;
+		if (probsCount == table->maxProbs)
+			return false;
+		probsCount++;
 		index = macroHash(table->size, macroName, index);
 		item = table->items[index];
 	}
@@ -103,15 +108,19 @@ void insertMacro(macroTable* table, macroItem* newItem, char* key, unsigned long
 	if (!searchMacro(table, key))
 	{
 		macroItem* ptr = table->items[value];
+		int probsCount = 1;
 
 		while (ptr != NULL)
 		{
 			value =	macroHash(table->size, key, value); /*re-hash*/
 			ptr = table->items[value];
+			probsCount++;
 		}
 
 		newItem->hashValue = value;
 		table->items[value] = newItem;
+		if (table->maxProbs < probsCount)
+			table->maxProbs = probsCount;
 	}
 }
 
